@@ -1,8 +1,8 @@
 #!/usr/bin/env node
-import { CommandConvert } from "./command-convert";
 import * as commandLineArgs from 'command-line-args';
 import * as commandLineUsage from 'command-line-usage';
-import { CommandVersion } from "./command-version";
+import { CommandConvert } from "./CommandConvert";
+import { CommandVersion } from "./CommandVersion";
 
 type CommandType = "convert" | "mana" | "price" | "version";
 
