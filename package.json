@@ -1,0 +1,30 @@
+{
+  "name": "@4thokage/mtg-toolkit",
+  "version": "0.1.1",
+  "description": "Command Line Interface for the Magic the Gathering tools I use the most",
+  "author": "Zezadas",
+  "license": "GPL-3.0+",
+  "scripts": {
+    "prepare": "tsc",
+    "build": "tsc",
+    "version": "ts-node ./src/index.ts -- version",
+    "exec": "ts-node ./src/index.ts",
+    "test": "jest"
+  },
+  "bin": {
+    "mtg-tk": "build/index.js"
+  },
+  "dependencies": {
+    "command-line-args": "^5.1.1",
+    "command-line-usage": "^6.1.0",
+    "linebyline": "1.3.0",
+    "path": "0.12.7"
+  },
+  "devDependencies": {
+    "@types/node": "^10.12.1",
+    "jest": "^27.0.4",
+    "ts-node": "^7.0.1",
+    "tslib": "^1.9.3",
+    "typescript": "^3.7.3"
+  }
+}
