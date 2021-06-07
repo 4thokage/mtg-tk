@@ -8,7 +8,7 @@ version 0.1.1
 2. npm i @4thokage/mtg-tk -g
 
 ## Usage
-mtg-tk convert -f <file|extension>
-mtg-tk price -f <file|extension>
-mtg-tk mana -f <file|extension>
-mtg-tk version
+ - mtg-tk convert -f <file|extension>
+ - mtg-tk price -f <file|extension>
+ - mtg-tk mana -f <file|extension>
+ - mtg-tk version
