@@ -2,6 +2,7 @@ import * as commandLineArgs from 'command-line-args';
 import * as commandLineUsage from 'command-line-usage';
 import * as fs from 'fs';
 import * as path from 'path';
+import { DeckfileUtils } from './DeckFileUtils';
 
 
 type ConverterConfig = {
@@ -63,51 +64,25 @@ export class CommandConvert {
 
     private run(cfg: ConverterConfig): number {
 
-        const CARDREGEXP = /(cards((\s+\w+=\"[^\"]+\")+))/im;
-        let newFileName = path.dirname(cfg.file) + "/" + path.basename(cfg.file, '.dek');
-
+        
+        
         let cards = [];
-
-        const data = fs.readFileSync(cfg.file, 'UTF-8');
-        const lines = data.split(/\r?\n/);
-
-        lines.forEach((line) => {
-            let hit = CARDREGEXP.exec(line);
-
-            if (hit !== null) {
-                let card = hit[1].trim().split(/Cards\s|"\s|\=\"|\"/);
-                card.splice(0, 1);
-                card.splice(0, 1);
-                card.splice(1, 1);
-                card.splice(2, 1);
-                card.splice(3, 1);
-                card.splice(4, 1);
-                return cards.push(card);
-            }
-        });
-        return writeFile(newFileName + ".dec", renderDec(cards));
+        
+        DeckfileUtils.readDek(cfg.file, cards);
+        
+        DeckfileUtils.writeFile(cfg.file + ".csv", convert2CSV(cards))
+        DeckfileUtils.writeFile(cfg.file + "-BBCODE.txt", convert2BBCode(cards, cfg.file))
+        DeckfileUtils.writeFile(cfg.file + "-deckstats.txt", convert2DeckStats(cards))
+        return DeckfileUtils.writeFile(cfg.file + ".dec", convert2Dec(cards));
 
     }
 }
 
-function writeFile(location: string, text: any): number {
-    let error: any;
-    console.log("Writing " + location + "...");
-    try {
-        fs.writeFileSync(location, text);
-    } catch (_error) {
-        error = _error;
-        console.log(error);
-        return -1;
-    }
-    return 0;
-}
-
-function renderDec(cards: string[]) {
-    var deckText;
+function convert2Dec(cards: string[]) {
+    var deckText: string;
     deckText = "";
     cards.forEach(function (card) {
-        var location;
+        var location: string;
         if (card[2] === "false") {
             location = "Deck";
         } else {
@@ -120,3 +95,76 @@ function renderDec(cards: string[]) {
     });
     return deckText;
 };
+
+function convert2DeckStats(cards: string[]) {
+    let deckText = "";
+    let sideArr = [];
+    let deckArr = [];
+
+    let appendCard = function(card: string[]) {
+      return deckText += card[1] + " " + card[3] + "\n";
+    };
+
+    cards.forEach(function(card) {
+      if (card[2] === "false") {
+        return deckArr.push(card);
+      } else {
+        return sideArr.push(card);
+      }
+    });
+    deckArr.forEach(appendCard);
+    if (sideArr.length > 0) {
+      deckText += "\n//Sideboard\n";
+      sideArr.forEach(appendCard);
+    }
+    return deckText;
+  };
+
+  function convert2BBCode(cards: any[], filename: string) {
+    let deckText = "[DECK= " + filename + "]\n";
+    let sideArr = [];
+    let deckArr = [];
+    let appendCard = function(card: string[]) {
+      return deckText += card[1] + " " + card[3] + "\n";
+    };
+    cards.forEach(function(card: string[]) {
+      if (card[2] === "false") {
+        return deckArr.push(card);
+      } else {
+        return sideArr.push(card);
+      }
+    });
+    deckArr.forEach(appendCard);
+    if (sideArr.length > 0) {
+      deckText += "\nSideboard\n";
+      sideArr.forEach(appendCard);
+    }
+    deckText += "[/DECK]\n";
+    return deckText;
+  };
+
+  function convert2CSV(cards: any[]) {
+    let deckText = "Count,Card,Sideboard,\n";
+    let sideArr = [];
+    let deckArr = [];
+
+    let appendCard = function(card: string[]) {
+      return deckText += "\"" + card[1] + "\",\"" + card[3] + "\",\"false\",\n";
+    };
+    let appendSbCard = function(card: string[]) {
+      return deckText += "\"" + card[1] + "\",\"" + card[3] + "\",\"true\",\n";
+    };
+
+    cards.forEach(function(card: string[]) {
+      if (card[2] === "false") {
+        return deckArr.push(card);
+      } else {
+        return sideArr.push(card);
+      }
+    });
+    deckArr.forEach(appendCard);
+    if (sideArr.length > 0) {
+      sideArr.forEach(appendSbCard);
+    }
+    return deckText;
+  };
