@@ -1,6 +1,6 @@
-# mtg-tk
+# MTG-Tk
 
-Utility CLI with Magic: The Gathering tools I use the most.
+A bunch of Magic: The Gathering tools I use, bundled together.
 
 ## Install
 2. npm i @zezadas/mtg-tk -g

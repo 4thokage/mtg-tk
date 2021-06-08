@@ -1,22 +1,21 @@
 import * as commandLineArgs from 'command-line-args';
 import * as commandLineUsage from 'command-line-usage';
 import { DeckfileUtils } from './DeckFileUtils';
-import { jsPDF } from "jspdf";
 import { ScryfallSyncService } from './ScryfallSyncService';
 
 
-type ProxyConfig = {
+type ManaConfig = {
     file: string
     format: string;
 };
 
 
-export class CommandProxy {
+export class CommandMana {
 
     private readonly usage = [
         {
-            header: 'Generate a printable pdf with proxies from file.',
-            content: 'mtg-tk proxy -f <file|extension>',
+            header: 'Calculates avg price from deckfile.',
+            content: 'mtg-tk price -f <file|extension>',
         },
         {
             header: 'Parameters',
@@ -52,7 +51,7 @@ export class CommandProxy {
 
 
     exec(): number {
-        const cfg = commandLineArgs(this.paramDef) as ProxyConfig;
+        const cfg = commandLineArgs(this.paramDef) as ManaConfig;
 
         // Valid require params
         const requiresNotSetted = this.paramDef
@@ -72,42 +71,20 @@ export class CommandProxy {
         return this.run(cfg);
     }
 
-    private run(cfg: ProxyConfig): number {
+    private run(cfg: ManaConfig): number {
 
         let cards = [];
 
         DeckfileUtils.readDek(cfg.file, cards);
 
-        const doc = new jsPDF();
 
         const cs = new ScryfallSyncService();
-        let index = 0;
-        let x = 0;
-        let y = 0;
         cards
             .map(cs.fetchScryfallData)
-            .map(cs.fetchCardImage)
-            .map((img) => {
-                for(img.count in img) {
-                    if(index !== 0 && index % 3 === 0) {
-                        x = 0;
-                        y += 88.9;
-                    }
-                    if(index !== 0 && index % 9 === 0) {
-                        x = 0;
-                        y = 0;
-                        doc.addPage();
-                        index = 0;
-                    }
-
-                    doc.addImage(img.data, 'JPEG', x, y, 63.5, 88.9);
-                    x += 63.5;
-                    index++;
-                }
-
+            .forEach(price => {
+                console.log(price);
             });
 
-        doc.save(cfg.file + ".pdf");
 
         return 0;
 

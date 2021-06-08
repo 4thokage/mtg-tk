@@ -1,7 +1,19 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-export class DeckfileUtils {
+
+type DeckType = "DEK" | "DEC" | "MTGO" | "MTGA";
+
+export class DeckfileUtils {  
+
+    static read(file: string, cards: any[], type: DeckType = 'DEK'): any {
+
+        if(type === "DEK") {
+            this.readDek(file, cards)
+        }
+      }
+
+
     static readDek(file: string, cards: any[]): any {
 
         const data = fs.readFileSync(file, 'UTF-8');
@@ -26,11 +38,10 @@ export class DeckfileUtils {
 
     static writeFile(file: string, text: any): number {
 
-        let newFileName = path.dirname(file) + "/" + path.basename(file, '.dek');
         let error: any;
-        console.log("Writing " + newFileName + "...");
+        console.log("Writing " + file + "...");
         try {
-            fs.writeFileSync(newFileName, text);
+            fs.writeFileSync(file, text);
         } catch (_error) {
             error = _error;
             console.log(error);

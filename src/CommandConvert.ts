@@ -64,16 +64,18 @@ export class CommandConvert {
 
     private run(cfg: ConverterConfig): number {
 
-        
-        
+        const fileNoExt = path.parse(cfg.file).name;
         let cards = [];
-        
-        DeckfileUtils.readDek(cfg.file, cards);
-        
-        DeckfileUtils.writeFile(cfg.file + ".csv", convert2CSV(cards))
-        DeckfileUtils.writeFile(cfg.file + "-BBCODE.txt", convert2BBCode(cards, cfg.file))
-        DeckfileUtils.writeFile(cfg.file + "-deckstats.txt", convert2DeckStats(cards))
-        return DeckfileUtils.writeFile(cfg.file + ".dec", convert2Dec(cards));
+
+        DeckfileUtils.read(cfg.file, cards);
+
+
+        DeckfileUtils.writeFile(fileNoExt + ".csv", convert2CSV(cards));
+        DeckfileUtils.writeFile(fileNoExt + "-BBCODE.txt", convert2BBCode(cards, cfg.file));
+        DeckfileUtils.writeFile(fileNoExt + "-deckstats.txt", convert2DeckStats(cards));
+        DeckfileUtils.writeFile(fileNoExt + ".dec", convert2Dec(cards));
+
+        return 0;
 
     }
 }
@@ -101,70 +103,70 @@ function convert2DeckStats(cards: string[]) {
     let sideArr = [];
     let deckArr = [];
 
-    let appendCard = function(card: string[]) {
-      return deckText += card[1] + " " + card[3] + "\n";
+    let appendCard = function (card: string[]) {
+        return deckText += card[1] + " " + card[3] + "\n";
     };
 
-    cards.forEach(function(card) {
-      if (card[2] === "false") {
-        return deckArr.push(card);
-      } else {
-        return sideArr.push(card);
-      }
+    cards.forEach(function (card) {
+        if (card[2] === "false") {
+            return deckArr.push(card);
+        } else {
+            return sideArr.push(card);
+        }
     });
     deckArr.forEach(appendCard);
     if (sideArr.length > 0) {
-      deckText += "\n//Sideboard\n";
-      sideArr.forEach(appendCard);
+        deckText += "\n//Sideboard\n";
+        sideArr.forEach(appendCard);
     }
     return deckText;
-  };
+};
 
-  function convert2BBCode(cards: any[], filename: string) {
+function convert2BBCode(cards: any[], filename: string) {
     let deckText = "[DECK= " + filename + "]\n";
     let sideArr = [];
     let deckArr = [];
-    let appendCard = function(card: string[]) {
-      return deckText += card[1] + " " + card[3] + "\n";
+    let appendCard = function (card: string[]) {
+        return deckText += card[1] + " " + card[3] + "\n";
     };
-    cards.forEach(function(card: string[]) {
-      if (card[2] === "false") {
-        return deckArr.push(card);
-      } else {
-        return sideArr.push(card);
-      }
+    cards.forEach(function (card: string[]) {
+        if (card[2] === "false") {
+            return deckArr.push(card);
+        } else {
+            return sideArr.push(card);
+        }
     });
     deckArr.forEach(appendCard);
     if (sideArr.length > 0) {
-      deckText += "\nSideboard\n";
-      sideArr.forEach(appendCard);
+        deckText += "\nSideboard\n";
+        sideArr.forEach(appendCard);
     }
     deckText += "[/DECK]\n";
     return deckText;
-  };
+};
 
-  function convert2CSV(cards: any[]) {
+function convert2CSV(cards: any[]) {
     let deckText = "Count,Card,Sideboard,\n";
     let sideArr = [];
     let deckArr = [];
 
-    let appendCard = function(card: string[]) {
-      return deckText += "\"" + card[1] + "\",\"" + card[3] + "\",\"false\",\n";
+    let appendCard = function (card: string[]) {
+        return deckText += "\"" + card[1] + "\",\"" + card[3] + "\",\"false\",\n";
     };
-    let appendSbCard = function(card: string[]) {
-      return deckText += "\"" + card[1] + "\",\"" + card[3] + "\",\"true\",\n";
+    let appendSbCard = function (card: string[]) {
+        return deckText += "\"" + card[1] + "\",\"" + card[3] + "\",\"true\",\n";
     };
 
-    cards.forEach(function(card: string[]) {
-      if (card[2] === "false") {
-        return deckArr.push(card);
-      } else {
-        return sideArr.push(card);
-      }
+    cards.forEach(function (card: string[]) {
+        if (card[2] === "false") {
+            return deckArr.push(card);
+        } else {
+            return sideArr.push(card);
+        }
     });
     deckArr.forEach(appendCard);
     if (sideArr.length > 0) {
-      sideArr.forEach(appendSbCard);
+        sideArr.forEach(appendSbCard);
     }
     return deckText;
-  };
+};

@@ -2,11 +2,12 @@
 import * as commandLineArgs from 'command-line-args';
 import * as commandLineUsage from 'command-line-usage';
 import { CommandConvert } from "./CommandConvert";
+import { CommandMana } from './CommandMana';
 import { CommandPrice } from './CommandPrice';
 import { CommandProxy } from "./CommandProxy";
 import { CommandVersion } from "./CommandVersion";
 
-type CommandType = "convert" | "proxy" | "price" | "version";
+type CommandType = "convert" | "proxy" | "price" | "mana" | "version";
 
 type MainConfig = {
   command: CommandType,
@@ -15,16 +16,17 @@ type MainConfig = {
 class Main {
   private readonly mainUsage = [
     {
-      header: 'Command Line Interface for the Magic the Gathering tools I use the most',
-      content: 'Sample for CLI.',
+      header: 'MTG-Tk',
+      content: 'A bunch of Magic: The Gathering tools I use, bundled together.',
     },
     {
       header: 'Commands',
       content: {
         data: [
-          { colA: 'mtg-tk convert -f <file|extension>', colB: 'Convert DEK to other formats.'},
-          { colA: 'mtg-tk proxy -f <file|extension> -t <type>', colB: 'Generate a printable pdf with proxies from file.'},
+          { colA: 'mtg-tk convert -f <file|extension>', colB: 'Parse input deckfile (deck) and converts to other formats.'},
+          { colA: 'mtg-tk proxy -f <file|extension> -t <type>', colB: 'Generate a printable pdf with proxies from deckfile.'},
           { colA: 'mtg-tk price -f <file|extension> -t <type>', colB: 'Calculates average price form deckfile.'},
+          { colA: 'mtg-tk mana -f <file|extension> -t <type>', colB: 'Calculates simple mana base from deckfile.'},
           { colA: 'mtg-tk version', colB: 'Show version.'},
         ],
         options: { maxWidth: 100 }
@@ -45,6 +47,7 @@ class Main {
     [ "convert", () => new CommandConvert().exec() ],
     [ "proxy", () => new CommandProxy().exec() ],
     [ "price", () => new CommandPrice().exec() ],
+    [ "mana", () => new CommandMana().exec() ],
     [ "version", () => new CommandVersion().exec() ],
   ]);
   
