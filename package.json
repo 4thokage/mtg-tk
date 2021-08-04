@@ -16,7 +16,7 @@
     "mtg-tk": "build/index.js"
   },
   "dependencies": {
-    "command-line-args": "5.1.1",
+    "command-line-args": "5.1.2",
     "command-line-usage": "6.1.1",
     "jspdf": "^2.3.1",
     "path": "0.12.7",
